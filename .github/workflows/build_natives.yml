@@ -40,7 +40,12 @@ jobs:
         with:
           update: true
           install: >-
-            mingw-w64-x86_64-ninja
+            git
+            make
+          pacboy: >-
+            toolchain:p
+            cmake:p
+            ninja:p
       - name: Configure CMake
         run: |
           cd libuvc
