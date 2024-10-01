@@ -31,7 +31,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: bash
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v3
         with:
