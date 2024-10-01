@@ -4,8 +4,6 @@ on:
     branches:
       - "**"
 
-env:
-  BUILD_TYPE: Release
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -13,14 +11,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - uses: actions/setup-java@v3
-        with:
-          distribution: adopt
-          java-version: "8"
-      - name: Configure CMake
-        run: cmake .
-      - name: Build
-        run: cmake --build ${{github.workspace}} --config ${{env.BUILD_TYPE}}
+      - name: Configure & Build
+        run: |
+          cd libuvc
+          cmake .
+          cmake --build ${{github.workspace}}
       - uses: actions/upload-artifact@v3
         with:
           name: native-linux-amd64
@@ -34,23 +29,19 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - uses: actions/setup-java@v3
-        with:
-          distribution: adopt
-          java-version: "8"
       - uses: msys2/setup-msys2@v2
         with:
           update: true
           install: >-
             mingw-w64-x86_64-ninja
-      - name: Configure CMake
-        run: cmake -T ClangCL .
-      - name: Build
-        run: cmake --build ${{github.workspace}} --config ${{env.BUILD_TYPE}}
+      - name: Configure & Build
+        run: |
+          cmake .
+          cmake --build ${{github.workspace}}
       - uses: actions/upload-artifact@v3
         with:
           name: native-windows-amd64
-          path: ${{github.workspace}}\${{env.BUILD_TYPE}}\*.dll
+          path: ${{github.workspace}}\*.dll
   build-mac:
     runs-on: macos-11
     steps:
