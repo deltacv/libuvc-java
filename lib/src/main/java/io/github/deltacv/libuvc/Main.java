@@ -28,7 +28,9 @@ public class Main {
         UVCContext uvcContext = new UVCContext(ctx.getValue());
 
         PointerByReference dev = new PointerByReference();
+
         res = LibUVC.INSTANCE.uvc_find_device(uvcContext, dev, 0, 0, null);  // Use VID/PID as needed
+        
         if (res < 0) {
             System.err.println("No UVC devices found");
             LibUVC.INSTANCE.uvc_exit(uvcContext);

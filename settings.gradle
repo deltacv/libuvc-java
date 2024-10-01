@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = 'libuvc-java'
 include('lib')
+include('natives')
