@@ -26,7 +26,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: native-linux-amd64
-          path: ${{github.workspace}}/*.so
+          path: ${{github.workspace}}/libuvc/build/*.so
   build-windows:
     runs-on: windows-latest
     defaults:
@@ -41,11 +41,16 @@ jobs:
           update: true
           install: >-
             mingw-w64-x86_64-ninja
-      - name: Configure & Build
+      - name: Configure CMake
         run: |
           cd libuvc
-          cmake .
-          cmake --build ${{github.workspace}}
+          mkdir build
+          cd build
+          cmake ..
+      - name: Build
+        run: |
+          cd libuvc/build
+          make && sudo make install
       - uses: actions/upload-artifact@v3
         with:
           name: native-windows-amd64
