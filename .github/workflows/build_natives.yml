@@ -21,9 +21,7 @@ jobs:
           cmake ..
       - name: Build
         run: |
-          cd libuvc 
-          mkdir build
-          cd build
+          cd libuvc/build
           make && sudo make install
       - uses: actions/upload-artifact@v3
         with:
