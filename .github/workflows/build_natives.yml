@@ -52,7 +52,7 @@ jobs:
           cd libuvc
           mkdir build
           cd build
-          cmake ..
+          cmake .. -G"MinGW Makefiles"
       - name: Build
         run: |
           cd libuvc/build
