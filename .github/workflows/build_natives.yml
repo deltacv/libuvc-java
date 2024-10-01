@@ -13,11 +13,18 @@ jobs:
           submodules: recursive
       - name: Install libusb
         run: sudo apt install libusb-1.0-0-dev
-      - name: Configure & Build
+      - name: Configure CMake
         run: |
           cd libuvc
-          cmake .
-          cmake --build ${{github.workspace}}
+          mkdir build
+          cd build
+          cmake ..
+      - name: Build
+        run: |
+          cd libuvc 
+          mkdir build
+          cd build
+          make && sudo make install
       - uses: actions/upload-artifact@v3
         with:
           name: native-linux-amd64
