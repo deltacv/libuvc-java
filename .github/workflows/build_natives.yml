@@ -27,40 +27,6 @@ jobs:
         with:
           name: native-linux-amd64
           path: ${{github.workspace}}/libuvc/build/*.so
-  build-windows:
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          install: >-
-            git
-            make
-          pacboy: >-
-            toolchain:p
-            cmake:p
-            ninja:p
-            libusb:p
-      - name: Configure CMake
-        run: |
-          cd libuvc
-          mkdir build
-          cd build
-          cmake .. -G"MinGW Makefiles"
-      - name: Build
-        run: |
-          cd libuvc/build
-          make && sudo make install
-      - uses: actions/upload-artifact@v3
-        with:
-          name: native-windows-amd64
-          path: ${{github.workspace}}\*.dll
   build-mac:
     runs-on: macos-11
     steps:
@@ -72,17 +38,22 @@ jobs:
           distribution: adopt
           java-version: "8"
       - name: Configure CMake
-        run: cmake .
+        run: |
+          cd libuvc
+          mkdir build
+          cd build
+          cmake ..
       - name: Build
-        run: cmake --build ${{github.workspace}} --config ${{env.BUILD_TYPE}}
+        run: |
+          cd libuvc/build
+          make && sudo make install
       - uses: actions/upload-artifact@v3
         with:
           name: native-mac-amd64
-          path: ${{github.workspace}}/*.dylib
+          path: ${{github.workspace}}/libuvc/build/*.dylib
   build-mac-cross-m1:
     needs:
       - build-linux
-      - build-windows
       - build-mac
     runs-on: macos-11
     steps:
@@ -94,13 +65,15 @@ jobs:
           distribution: adopt
           java-version: "8"
       - name: Configure CMake
-        run: cmake -DCMAKE_OSX_ARCHITECTURES="arm64" .
+        run: |
+          cd libuvc
+          mkdir build
+          cd build
+          cmake -DCMAKE_OSX_ARCHITECTURES="arm64" ..
       - name: Build
-        run: cmake --build ${{github.workspace}} --config ${{env.BUILD_TYPE}}
-      - uses: actions/download-artifact@v3
-        with:
-          name: native-windows-amd64
-          path: ${{github.workspace}}
+        run: |
+          cd libuvc/build
+          make && sudo make install
       - uses: actions/download-artifact@v3
         with:
           name: native-linux-amd64
@@ -117,6 +90,6 @@ jobs:
           prerelease: true
           title: Natives from ${{github.ref}}
           files: |
-            ${{github.workspace}}/*.dll
             ${{github.workspace}}/*.so
             ${{github.workspace}}/*.dylib
+            ${{github.workspace}}/libuvc/build/*.dylib
